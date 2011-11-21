@@ -57,8 +57,8 @@ if ( function_exists('post_class') ) { ?>
                                                                                                                                    </div>
      <div id="blurb">
      <?php print_custom_field('large_blurb:wrapper', '<p> [+content+]</p>'); ?>
-</div>
                                                                                                                                                                        <?php print_custom_field('belongs_to:wrapper:to_link_href', '<p>More about [+content+]</p>');?>
+</div>
 </td>
 </tr>
 </table>
@@ -98,3 +98,9 @@ if ( function_exists('post_class') ) { ?>
      # if ( $bfa_ata['center_content_bottom'] != '' ) include 'bfa://center_content_bottom'; ?>
 
      <?php get_footer(); ?>
+
+dfdtramp_exit_status 0
+matt@shimano:~$ 
+
+
+
