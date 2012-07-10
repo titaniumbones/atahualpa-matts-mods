@@ -10,6 +10,8 @@ Template Name: Faculty Individual Page
 list($bfa_ata, $cols, $left_col, $left_col2, $right_col, $right_col2, $bfa_ata['h_blogtitle'], $bfa_ata['h_posttitle']) = bfa_get_options();
 get_header(); 
 extract($bfa_ata); 
+include_once( CCTM_PATH . '/includes/GetPostsQuery.php');
+
 
 ?>
 <?php /* If there are any posts: */
@@ -32,50 +34,63 @@ if ( function_exists('post_class') ) { ?>
  * 
  *      bfa_post_headline('<div class="post-headline">','</div>');
  * 
- * bfa_post_byline('<div class="post-byline">','</div>'); */ ?> 
+ * bfa_post_byline('<div class="post-byline">','</div>'); */ 
+      $book = get_post_complete($post->ID);
+      //print_r($book);
+?> 
 <!-- Book Cover Image -->
 <table>
-<tr>
-<td width="130">
+  <tr>
+    <td valign="top" width="130">
    <?php  if((get_post_meta($post->ID, "book_cover_image", true))) { ?>
      <div id=book_cover_image>
      <?php print_custom_field('book_cover_image:to_image_tag', 'thumbnail'); 
       ?>
        </div>
            <?php }?>
-</td>
+    </td>
 <!-- THis contains the main info -->
-<td valign=top>
-     <div id="pub-info">
-     <?php the_title('<b>', '</b>'); ?>
-     <?php print_custom_field('authors:wrapper', ', <i>[+content+]</i>. '); ?>
-     <?php  if((get_post_meta($post->ID, "book_city", true)) or (get_post_meta($post->ID, "book_publisher", true)) or (get_post_meta($post->ID, "book_year", true))) { ?>
-(<?php print_custom_field('book_city:wrapper', '[+content+]: '); ?>
-<?php print_custom_field('book_publisher:wrapper', '[+content+]'); ?>
-   <?php print_custom_field('book_year:wrapper', ', [+content+]'); ?>)
-  <?php } ?>
-                                                                                                                                   </div>
-     <div id="blurb">
-     <?php print_custom_field('large_blurb:wrapper', '<p> [+content+]</p>'); ?>
-                                                                                                                                                                       <?php print_custom_field('belongs_to:wrapper:to_link_href', '<p>More about [+content+]</p>');?>
-</div>
-</td>
-</tr>
+    <td valign="top">
+      <div id="pub-info">
+        <?php print_custom_field('authors');
+     print ", "; ?>
+        <?php the_title('<b><i>', '</b></i>');
+          $pubinfo = ' (';
+          if ($book['book_city'])
+            {
+              $pubinfo .= $book['book_city'] . ': ';
+            }
+          if ($book['book_publisher'])
+            {
+              $pubinfo .= $book['book_publisher'] . ', ';
+            }
+          if ($book['book_year'])
+            {
+              $pubinfo .= $book['book_year'] ;
+            }
+          $pubinfo .= ')';
+          print $pubinfo;
+        ?>
+      </div>
+      <div id="blurb">
+        <?php print_custom_field('large_blurb');?>
+      </div>
+      <div id="terms">
+     <?php print get_all_term_lists (get_the_ID(), "long") ;?>
+
+      </div>
+      <div id="authorlinks">
+        <?php 
+            $belongs =  get_instructor_list(CCTM::filter($book['belongs_to']), 'raw');
+          if( ! empty ($belongs) ) {
+            print "<p>More About " . $belongs . "</p>";
+          }
+        ?>
+      </div>
+    </td>
+  </tr>
 </table>
-
-<!-- Body of Post -->
-     <?php bfa_post_bodycopy('<div class="post-bodycopy clearfix">','</div>'); ?>
-
-<!-- Taxonomic Terms -->
-     <?php /* more custom fields, this time going under the 'body' -- publications and tags, this time */ ?>
-     <?php echo get_the_term_list( get_the_ID(), 'geographical-areas', "<p><strong>Geographical Areas of Interest: </strong>", ", ", "</p>" ) ;?>
-     <?php echo get_the_term_list( get_the_ID(), 'thematic-areas'    , "<p><strong>Thematic Areas of Interest: </strong>"    , ", ", "</p>" ) ;?>
-     <?php if((get_post_meta($post->ID, "publications", true))) { ?>
-     <div id=person-publications>
-       <strong>Selected Publications:</strong><br />
-       <?php print_custom_field('publications'); ?>
-    <?php } ?>
-     </div>
+<!-- end of the main section -->
 
      <?php bfa_post_pagination('<p class="post-pagination"><strong>'.__('Pages:','atahualpa').'</strong>','</p>'); ?>
 
@@ -98,9 +113,3 @@ if ( function_exists('post_class') ) { ?>
      # if ( $bfa_ata['center_content_bottom'] != '' ) include 'bfa://center_content_bottom'; ?>
 
      <?php get_footer(); ?>
-
-dfdtramp_exit_status 0
-matt@shimano:~$ 
-
-
-
